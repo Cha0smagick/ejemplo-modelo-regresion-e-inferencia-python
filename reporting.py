@@ -10,12 +10,38 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
     print_substep("Generando reporte científico en texto plano...")
     try:
         with open(txt_filename, "w", encoding="utf-8") as f:
-            f.write("REPORTE CIENTÍFICO DE REGRESIÓN POLINÓMICA (Q2 - Optimizado)\n")
+            f.write("REPORTE CIENTÍFICO: RANDOM FOREST REGRESSOR\n")
             f.write("="*50 + "\n\n")
             f.write(f"RMSE: {rmse:,.2f}\n")
             f.write(f"R^2: {r2:.4f}\n\n")
-            f.write("RESUMEN DEL MODELO (Statsmodels)\n")
-            f.write(model.summary().as_text())
+            
+            if hasattr(model, 'summary'):
+                # Statsmodels
+                f.write("RESUMEN DEL MODELO (Statsmodels)\n")
+                f.write(model.summary().as_text())
+            elif hasattr(model, 'feature_importances_'):
+                # Random Forest / Arboles
+                f.write("IMPORTANCIA DE VARIABLES (Random Forest)\n")
+                f.write("-" * 50 + "\n")
+                importancias = pd.DataFrame({
+                    'Variable': model.feature_names_in_,
+                    'Importancia': model.feature_importances_
+                }).sort_values(by='Importancia', ascending=False)
+                
+                f.write(importancias.to_string(index=False))
+            elif hasattr(model, 'coef_'):
+                # Modelos Lineales Sklearn (Ridge, Lasso)
+                f.write("RESUMEN DE COEFICIENTES (Lineal)\n")
+                f.write("-" * 40 + "\n")
+                f.write(f"{'Variable':<40} | {'Coeficiente':>15}\n")
+                f.write("-" * 60 + "\n")
+                if hasattr(model, 'coef_') and hasattr(model, 'feature_names_in_'):
+                    for name, coef in zip(model.feature_names_in_, model.coef_):
+                        f.write(f"{name:<40} | {coef:>15.5f}\n")
+                f.write("-" * 60 + "\n")
+                if hasattr(model, 'intercept_'):
+                    f.write(f"{'Intercepto (Bias)':<40} | {model.intercept_:>15.5f}\n")
+
         print_success(f"Archivo guardado: {txt_filename}")
     except Exception as e:
         print_error(f"Error generando TXT: {e}")
@@ -25,13 +51,25 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
     print_substep("Compilando resultados en libro de Excel...")
     
     # Extraer coeficientes
-    try:
-        table_data = model.summary().tables[1].data
-        coef_df = pd.DataFrame(table_data[1:], columns=table_data[0])
-        for col in coef_df.columns:
-            coef_df[col] = pd.to_numeric(coef_df[col], errors='ignore')
-    except:
-        coef_df = pd.DataFrame(model.params, columns=['Coeficiente Estimado'])
+    if hasattr(model, 'summary'):
+        # Logica para Statsmodels
+        try:
+            table_data = model.summary().tables[1].data
+            coef_df = pd.DataFrame(table_data[1:], columns=table_data[0])
+            for col in coef_df.columns:
+                coef_df[col] = pd.to_numeric(coef_df[col], errors='ignore')
+        except:
+            coef_df = pd.DataFrame()
+    elif hasattr(model, 'feature_importances_'):
+        # Random Forest
+        coef_df = pd.DataFrame({
+            'Variable': model.feature_names_in_,
+            'Importancia': model.feature_importances_
+        }).sort_values(by='Importancia', ascending=False)
+    elif hasattr(model, 'coef_'):
+        # Lineales
+        coef_dict = {'Variable': model.feature_names_in_, 'Coeficiente': model.coef_}
+        coef_df = pd.DataFrame(coef_dict)
 
     # Predicciones
     pred_df = pd.DataFrame({

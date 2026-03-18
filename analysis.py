@@ -9,6 +9,12 @@ def analisis_exploratorio(df):
     """Realiza un EDA básico y retorna estadísticos."""
     print_step(2, "ANÁLISIS EXPLORATORIO DE DATOS (EDA)")
     
+    # 0. Normalización de datos categóricos (Limpieza)
+    print_substep("Normalizando texto en variables categóricas...")
+    cat_cols = df.select_dtypes(include=['object']).columns
+    for col in cat_cols:
+        df[col] = df[col].astype(str).str.lower().str.strip()
+
     # Verificar nulos
     print_substep("Verificando valores nulos...")
     if df.isnull().sum().sum() > 0:
@@ -36,7 +42,7 @@ def analisis_exploratorio(df):
     plt.tight_layout()
     guardar_grafico("1_matriz_correlacion.png")
     print_success("Gráfico de correlación generado y guardado.")
-    plt.show()
+    plt.close()
     
     return df, desc_stats, corr
 
@@ -65,7 +71,7 @@ def analisis_inferencial_clt(df, target_col):
     plt.axvline(np.mean(medias_muestrales), color='red', linestyle='--', label='Gran Media')
     plt.legend()
     guardar_grafico("2_teorema_limite_central.png")
-    plt.show()
+    plt.close()
     print_success("Gráfico de distribución muestral (TLC) generado.")
 
     # 2. Prueba de Hipótesis (T-Test)
@@ -106,6 +112,14 @@ def filtrar_mejor_canal(df, target_col, p_val, col_canal='channel'):
     if col_canal not in df.columns: return df
     
     mejor_canal = df.groupby(col_canal)[target_col].mean().sort_values(ascending=False).index[0]
+    
+    # Validación de tamaño de muestra
+    n_muestras = df[df[col_canal] == mejor_canal].shape[0]
+    # Aumentamos el umbral drásticamente porque el modelo Q2 genera muchas variables
+    if n_muestras < 300:
+        print_warning(f"El mejor canal '{mejor_canal}' tiene muy pocos datos ({n_muestras}) para soportar el modelo Q2. Se usará el dataset completo.")
+        return df
+
     print_success(f"Filtrando dataset por canal: '{mejor_canal}' (P-val < 0.05)")
     
     df_filtrado = df[df[col_canal] == mejor_canal].copy()

@@ -1,5 +1,5 @@
 """
-Pipeline de Análisis de Regresión Científico (Q2 / Polinómico Optimizado)
+Pipeline de Análisis Científico (Random Forest)
 Dataset: E-commerce Marketing and Sales Revenue Prediction
 MODULARIZADO
 """
@@ -10,7 +10,7 @@ import traceback
 from config import configurar_estilos
 from data_loader import cargar_datos
 from analysis import analisis_exploratorio, analisis_inferencial_clt, filtrar_mejor_canal
-from model_pipeline import preprocesamiento, pipeline_regresion_q2, diagnostico_residuos, exportar_modelo
+from model_pipeline import preprocesamiento, pipeline_modelado_avanzado, diagnostico_residuos, exportar_modelo
 from reporting import generar_reportes_finales
 from utils import print_warning, print_info
 
@@ -47,11 +47,11 @@ def main():
         # 4. Preprocesamiento
         X_train, X_test, y_train, y_test = preprocesamiento(df, target_col=target_col)
         
-        # 5. Modelado Q2 (Optimizado)
-        model, y_test_out, y_pred_out, rmse, r2 = pipeline_regresion_q2(X_train, y_train, X_test, y_test)
+        # 5. Modelado Avanzado (Random Forest)
+        model, y_test_out, y_pred_out, rmse, r2 = pipeline_modelado_avanzado(X_train, y_train, X_test, y_test)
         
         # 6. Exportación y Diagnóstico
-        exportar_modelo(model, "modelo_ecommerce_Q2.pkl")
+        exportar_modelo(model, "modelo_ecommerce_RF.pkl")
         diagnostico_residuos(y_test_out, y_pred_out)
         
         # 7. Generación de Salidas
