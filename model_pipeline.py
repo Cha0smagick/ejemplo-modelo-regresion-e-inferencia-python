@@ -3,7 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.impute import SimpleImputer
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
@@ -14,7 +15,19 @@ def preprocesamiento(df, target_col='revenue'):
     print_step(4, "PREPROCESAMIENTO DE DATOS")
     print_substep(f"Definiendo variable objetivo: {target_col}")
     
-    # 1. Limpieza: Eliminar ID y Fecha (no predictivos para este modelo)
+    # 1. Ingeniería de Fechas (Feature Engineering)
+    # Las tendencias temporales son vitales en e-commerce (navidad, temporadas)
+    if 'date' in df.columns:
+        print_substep("Extrayendo características temporales (Mes, Año, Día)...")
+        # Convertir a datetime con inferencia de formato
+        df['date_dt'] = pd.to_datetime(df['date'], errors='coerce')
+        
+        df['month'] = df['date_dt'].dt.month.fillna(0).astype(int)
+        df['year'] = df['date_dt'].dt.year.fillna(0).astype(int)
+        df['dow'] = df['date_dt'].dt.dayofweek.fillna(0).astype(int)
+        df = df.drop(columns=['date_dt'])
+
+    # 2. Limpieza: Eliminar ID y Fecha original
     cols_drop = [target_col]
     for col in ['id', 'date']:
         if col in df.columns: cols_drop.append(col)
@@ -22,17 +35,22 @@ def preprocesamiento(df, target_col='revenue'):
     X = df.drop(columns=cols_drop)
     y = df[target_col]
     
-    # 2. Ingeniería de Características: One-Hot Encoding para categorías
+    # 3. Ingeniería de Características: One-Hot Encoding para categorías
     print_substep("Codificando variables categóricas (One-Hot Encoding)...")
     X = pd.get_dummies(X, drop_first=True)
-    X = X.fillna(0) # Seguridad para nulos post-dummies
+    
+    # Imputación profesional de características (rellenar huecos en X)
+    # Usamos la mediana porque es resistente a outliers
+    print_substep("Imputando valores faltantes en características (Mediana)...")
+    imputer = SimpleImputer(strategy='median')
+    X_imputed = pd.DataFrame(imputer.fit_transform(X), columns=X.columns, index=X.index)
     
     print_substep("Dividiendo conjunto de datos Train/Test (80/20)...")
-    return train_test_split(X, y, test_size=0.2, random_state=42)
+    return train_test_split(X_imputed, y, test_size=0.2, random_state=42)
 
 def pipeline_modelado_avanzado(X_train, y_train, X_test, y_test):
-    """Modelo avanzado utilizando Random Forest Regressor."""
-    print_step(5, "MODELADO: MACHINE LEARNING (RANDOM FOREST)")
+    """Modelo avanzado utilizando Gradient Boosting."""
+    print_step(5, "MODELADO: MACHINE LEARNING (GRADIENT BOOSTING)")
     
     # Random Forest no necesita escalado ni creación manual de polinomios.
     # Maneja interacciones no lineales internamente.
@@ -45,23 +63,22 @@ def pipeline_modelado_avanzado(X_train, y_train, X_test, y_test):
     # MEJORA CLAVE: Transformación Logarítmica del Target
     # Esto estabiliza la varianza para montos monetarios (ingresos)
     print_substep("Aplicando Log-Transform a la variable objetivo (Log-Lin)...")
-    
-    # Filtro de outliers: Suavizamos el umbral a 4 desviaciones estándar para no perder "ballenas"
     y_train_log = np.log1p(y_train.clip(lower=0))
-    mask_outliers = np.abs((y_train_log - y_train_log.mean()) / y_train_log.std()) < 4
-    X_train_final = X_train_final[mask_outliers]
-    y_train_log = y_train_log[mask_outliers]
-    print_info("Outliers removidos", f"{len(X_train) - len(X_train_final)}")
     
-    # 4. MODELADO CON RANDOM FOREST
-    # Usamos un bosque con suficientes árboles para estabilizar la predicción
-    print_substep("Entrenando Random Forest (200 árboles)...")
-    model = RandomForestRegressor(
-        n_estimators=200, 
-        max_depth=15,       # Limitamos profundidad para evitar overfitting extremo
-        min_samples_leaf=5, # Regularización: al menos 5 datos por hoja
+    # MEJORA: NO FILTRAR OUTLIERS EN EL TARGET
+    # En e-commerce, los 'whales' son reales e importantes. El RF es robusto a ellos.
+    print_info("Estrategia Outliers", "Conservando todos los datos (Whales incluidos)")
+
+    # 4. MODELADO CON GRADIENT BOOSTING
+    # Boosting suele superar a Random Forest en datos tabulares ruidosos
+    print_substep("Entrenando Gradient Boosting Regressor...")
+    model = GradientBoostingRegressor(
+        n_estimators=500,       # Más árboles, pero más pequeños
+        learning_rate=0.05,     # Aprender lento para generalizar mejor
+        max_depth=5,            # Profundidad controlada para evitar overfitting
+        min_samples_leaf=10,    # Regularización
+        loss='absolute_error',  # Clave: Usar error absoluto para ignorar outliers extremos
         random_state=42,
-        n_jobs=-1           # Usar todos los procesadores
     )
     model.fit(X_train_final, y_train_log)
     
@@ -76,10 +93,10 @@ def pipeline_modelado_avanzado(X_train, y_train, X_test, y_test):
     # Hack para que reporting.py pueda leer los nombres de las variables
     model.feature_names_in_ = X_train_final.columns.tolist()
     
-    print_success(f"Random Forest ajustado. R2 Test: {r2:.4f}")
+    print_success(f"Gradient Boosting ajustado. R2 Test: {r2:.4f}")
     
     print_kv_table({
-        "Modelo": "Random Forest Regressor",
+        "Modelo": "Gradient Boosting (LAD Loss)",
         "RMSE (Test)": f"{rmse:,.2f}",
         "R^2 (Test)": f"{r2:.4f}",
         "Observaciones Train": len(X_train),

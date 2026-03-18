@@ -37,6 +37,12 @@ def main():
         else:
             print_info("Variable objetivo detectada", target_col)
             
+        # NUEVO: Eliminar filas donde el Target sea nulo (Vital para no entrenar con basura)
+        initial_len = len(df)
+        df = df.dropna(subset=[target_col])
+        if len(df) < initial_len:
+            print_warning(f"Se eliminaron {initial_len - len(df)} filas con Target nulo para garantizar calidad.")
+
         # 3. Análisis Inferencial (TLC y Hipótesis)
         p_val = analisis_inferencial_clt(df, target_col)
             

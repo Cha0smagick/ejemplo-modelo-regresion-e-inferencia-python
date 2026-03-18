@@ -18,10 +18,8 @@ def analisis_exploratorio(df):
     # Verificar nulos
     print_substep("Verificando valores nulos...")
     if df.isnull().sum().sum() > 0:
-        print_warning("Valores nulos detectados. Imputando con la media/moda...")
-        df = df.fillna(df.mean(numeric_only=True))
-        # Para columnas no numéricas
-        df = df.fillna(method='ffill').fillna(method='bfill')
+        print_warning(f"Valores nulos detectados: {df.isnull().sum().sum()}")
+        print_info("Acción", "Se conservan los nulos para manejo específico en preprocesamiento (no imputación global).")
     else:
         print_success("Dataset limpio: No se encontraron valores nulos.")
     
