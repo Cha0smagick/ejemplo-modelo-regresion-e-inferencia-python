@@ -3,14 +3,14 @@
 
 ## 📜 Introducción
 
-Este proyecto es un ejercicio académico para la materia **Inferencia y Regresión**. Implementa un pipeline completo de ciencia de datos en Python, desde la ingesta de datos hasta el modelado y la generación de reportes. El objetivo principal es analizar un dataset de e-commerce para predecir los ingresos (`revenue`) utilizando un **modelo de regresión polinómica de grado 4**.
+Este proyecto es un ejercicio académico para la materia **Inferencia y Regresión**. Implementa un pipeline completo de ciencia de datos en Python, desde la ingesta de datos hasta el modelado y la generación de reportes. El objetivo principal es analizar un dataset de e-commerce para predecir los ingresos (`revenue`) utilizando un **modelo de regresión polinómica de grado 2 (Optimizado)**.
 
 El pipeline incluye:
 - Descarga automática de datos desde Kaggle.
 - Análisis Exploratorio de Datos (EDA).
 - Análisis Inferencial, incluyendo una demostración del **Teorema del Límite Central (TLC)** y una **Prueba de Hipótesis (T-Test)**.
 - Un paso de filtrado de datos basado en evidencia estadística.
-- Entrenamiento y evaluación de un modelo de regresión polinómica.
+- Entrenamiento y evaluación de un modelo de regresión polinómica (Grado 2 para evitar sobreajuste).
 - Pruebas de diagnóstico sobre los residuos del modelo.
 - Generación de reportes completos en formatos `.txt` y `.xlsx`.
 
@@ -82,14 +82,14 @@ La función `main` en `regresion.py` ejecuta los siguientes pasos:
 
 ### 5. Preprocesamiento y Modelado (`model_pipeline.py`)
 - **`preprocesamiento()`**: Los datos se dividen en conjuntos de entrenamiento (80%) y prueba (20%). Solo se utilizan las características numéricas para este modelo.
-- **`pipeline_regresion_q4()`**: Esta es la función principal de modelado.
-    1.  **Transformación Polinómica**: Utiliza `PolynomialFeatures(degree=4)` para crear términos de interacción y características polinómicas hasta el cuarto grado.
+- **`pipeline_regresion_q2()` (Optimizado)**: Esta es la función principal de modelado. Se utiliza grado 2 en lugar de 4 para mejorar la generalización.
+    1.  **Transformación Polinómica**: Utiliza `PolynomialFeatures(degree=2)` para crear términos de interacción y características cuadráticas.
     2.  **Escalado**: Se utiliza `StandardScaler` para estandarizar las características polinómicas recién creadas. Esto es crucial para la estabilidad del modelo.
     3.  **Ajuste del Modelo**: Se ajusta un modelo de Mínimos Cuadrados Ordinarios (OLS) utilizando la librería `statsmodels` sobre los datos de entrenamiento.
     4.  **Evaluación**: El modelo entrenado se utiliza para hacer predicciones sobre el conjunto de prueba. Se calculan y muestran métricas clave como el Error Cuadrático Medio (RMSE) y el R-cuadrado (R²).
 
 ### 6. Diagnóstico y Exportación (`model_pipeline.py`)
-- **`exportar_modelo()`**: El objeto del modelo `statsmodels` entrenado se guarda en un archivo (`modelo_ecommerce_Q4.pkl`) usando `joblib`.
+- **`exportar_modelo()`**: El objeto del modelo `statsmodels` entrenado se guarda en un archivo (`modelo_ecommerce_Q2.pkl`) usando `joblib`.
 - **`diagnostico_residuos()`**: Esta función genera gráficos para verificar los supuestos del modelo de regresión.
     - **Homocedasticidad**: Un gráfico de dispersión de los residuos frente a los valores predichos. Un patrón aleatorio alrededor de la línea cero sugiere que se cumple este supuesto.
     - **Normalidad de los Residuos**: Un histograma de los residuos para comprobar si siguen una distribución normal.
@@ -97,8 +97,8 @@ La función `main` en `regresion.py` ejecuta los siguientes pasos:
 
 ### 7. Generación de Reportes (`reporting.py`)
 - Finalmente, `generar_reportes_finales()` crea dos archivos de salida completos:
-- **`reporte_analisis_regresion_Q4.txt`**: Un archivo de texto que contiene las métricas de rendimiento (RMSE, R²) y el resumen completo y detallado del modelo OLS de `statsmodels`.
-- **`resultados_regresion_Q4_organizados.xlsx`**: Un libro de Excel con múltiples hojas para un análisis fácil:
+- **`reporte_analisis_regresion_Q2.txt`**: Un archivo de texto que contiene las métricas de rendimiento (RMSE, R²) y el resumen completo y detallado del modelo OLS de `statsmodels`.
+- **`resultados_regresion_Q2_organizados.xlsx`**: Un libro de Excel con múltiples hojas para un análisis fácil:
     - `Métricas`: RMSE y R².
     - `Coeficientes`: Los coeficientes del modelo y sus estadísticas.
     - `Datos`: Los datos (potencialmente filtrados) utilizados para el modelado.

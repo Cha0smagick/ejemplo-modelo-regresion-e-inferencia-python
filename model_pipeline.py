@@ -18,13 +18,13 @@ def preprocesamiento(df, target_col='revenue'):
     print_substep("Dividiendo conjunto de datos Train/Test (80/20)...")
     return train_test_split(X, y, test_size=0.2, random_state=42)
 
-def pipeline_regresion_q4(X_train, y_train, X_test, y_test):
-    """Modelo de regresión polinómica grado 4."""
-    print_step(5, "MODELADO: REGRESIÓN POLINÓMICA Q4")
+def pipeline_regresion_q2(X_train, y_train, X_test, y_test):
+    """Modelo de regresión polinómica grado 2 (Optimizado)."""
+    print_step(5, "MODELADO: REGRESIÓN POLINÓMICA Q2 (OPTIMIZADO)")
     
     # 1. Transformación Polinómica
-    print_substep("Aplicando Transformación Polinómica (Grado 4)...")
-    poly = PolynomialFeatures(degree=4, include_bias=False)
+    print_substep("Aplicando Transformación Polinómica (Grado 2)...")
+    poly = PolynomialFeatures(degree=2, include_bias=False)
     X_train_poly = poly.fit_transform(X_train)
     X_test_poly = poly.transform(X_test)
     
@@ -51,7 +51,7 @@ def pipeline_regresion_q4(X_train, y_train, X_test, y_test):
     print_success("Modelo ajustado correctamente.")
     
     print_kv_table({
-        "Modelo": "Regresión Polinómica Grado 4",
+        "Modelo": "Regresión Polinómica Grado 2",
         "RMSE (Test)": f"{rmse:,.2f}",
         "R^2 (Test)": f"{r2:.4f}",
         "Observaciones Train": len(X_train),
@@ -81,7 +81,7 @@ def diagnostico_residuos(y_test, y_pred):
     print_success("Gráficos de diagnóstico mostrados.")
     plt.show()
 
-def exportar_modelo(model, filename="modelo_regresion_Q4.pkl"):
+def exportar_modelo(model, filename="modelo_regresion_Q2.pkl"):
     """Guarda el modelo entrenado."""
     print_substep(f"Guardando objeto del modelo en disco ({filename})...")
     joblib.dump(model, filename)

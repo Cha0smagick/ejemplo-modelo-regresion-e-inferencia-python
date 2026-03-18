@@ -1,0 +1,97 @@
+REPORTE CIENTÍFICO DE REGRESIÓN POLINÓMICA (Q2 - Optimizado)
+==================================================
+
+RMSE: 536,545.11
+R^2: -705905.8282
+
+RESUMEN DEL MODELO (Statsmodels)
+                               OLS Regression Results                              
+===================================================================================
+Dep. Variable:     customer_lifetime_value   R-squared:                       1.000
+Model:                                 OLS   Adj. R-squared:                    nan
+Method:                      Least Squares   F-statistic:                       nan
+Date:                     Wed, 18 Mar 2026   Prob (F-statistic):                nan
+Time:                             12:57:46   Log-Likelihood:                 274.88
+No. Observations:                       13   AIC:                            -523.8
+Df Residuals:                            0   BIC:                            -516.4
+Df Model:                               12                                         
+Covariance Type:                 nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       5.297e+04        inf          0        nan         nan         nan
+x1         -2093.6066        inf         -0        nan         nan         nan
+x2          1.817e+04        inf          0        nan         nan         nan
+x3         -2827.8920        inf         -0        nan         nan         nan
+x4         -1071.1867        inf         -0        nan         nan         nan
+x5         -4595.5045        inf         -0        nan         nan         nan
+x6          3122.6980        inf          0        nan         nan         nan
+x7          -949.2896        inf         -0        nan         nan         nan
+x8          3631.5177        inf          0        nan         nan         nan
+x9           688.5763        inf          0        nan         nan         nan
+x10         1653.1440        inf          0        nan         nan         nan
+x11        -2659.7229        inf         -0        nan         nan         nan
+x12         1.854e+04        inf          0        nan         nan         nan
+x13        -1494.2618        inf         -0        nan         nan         nan
+x14          -78.4949        inf         -0        nan         nan         nan
+x15        -2710.0409        inf         -0        nan         nan         nan
+x16         3095.2372        inf          0        nan         nan         nan
+x17        -2778.0106        inf         -0        nan         nan         nan
+x18         2043.8127        inf          0        nan         nan         nan
+x19         1607.5122        inf          0        nan         nan         nan
+x20         2003.6799        inf          0        nan         nan         nan
+x21          2.33e+04        inf          0        nan         nan         nan
+x22         7183.7290        inf          0        nan         nan         nan
+x23        -1.366e+04        inf         -0        nan         nan         nan
+x24         1.456e+04        inf          0        nan         nan         nan
+x25         1.892e+04        inf          0        nan         nan         nan
+x26         1.317e+04        inf          0        nan         nan         nan
+x27         2.086e+04        inf          0        nan         nan         nan
+x28         8333.8116        inf          0        nan         nan         nan
+x29         1.858e+04        inf          0        nan         nan         nan
+x30        -4275.1791        inf         -0        nan         nan         nan
+x31        -1185.0135        inf         -0        nan         nan         nan
+x32        -1.123e+04        inf         -0        nan         nan         nan
+x33          154.8452        inf          0        nan         nan         nan
+x34         3083.8407        inf          0        nan         nan         nan
+x35         4905.3161        inf          0        nan         nan         nan
+x36        -1.078e+04        inf         -0        nan         nan         nan
+x37        -2974.9844        inf         -0        nan         nan         nan
+x38         2216.0996        inf          0        nan         nan         nan
+x39        -5632.8196        inf         -0        nan         nan         nan
+x40        -1180.9363        inf         -0        nan         nan         nan
+x41         1740.7776        inf          0        nan         nan         nan
+x42         -584.4482        inf         -0        nan         nan         nan
+x43        -8133.8822        inf         -0        nan         nan         nan
+x44        -1467.6005        inf         -0        nan         nan         nan
+x45        -3859.8626        inf         -0        nan         nan         nan
+x46         1951.1076        inf          0        nan         nan         nan
+x47        -1.521e+04        inf         -0        nan         nan         nan
+x48        -2320.1836        inf         -0        nan         nan         nan
+x49          648.9552        inf          0        nan         nan         nan
+x50        -1264.9953        inf         -0        nan         nan         nan
+x51         5889.4667        inf          0        nan         nan         nan
+x52        -2041.1495        inf         -0        nan         nan         nan
+x53         5569.9060        inf          0        nan         nan         nan
+x54         4587.2885        inf          0        nan         nan         nan
+x55         4614.6224        inf          0        nan         nan         nan
+x56         5057.1829        inf          0        nan         nan         nan
+x57         1021.7215        inf          0        nan         nan         nan
+x58         3613.3502        inf          0        nan         nan         nan
+x59         -288.1064        inf         -0        nan         nan         nan
+x60         2835.9808        inf          0        nan         nan         nan
+x61        -4913.5935        inf         -0        nan         nan         nan
+x62         3377.0930        inf          0        nan         nan         nan
+x63         9597.6876        inf          0        nan         nan         nan
+x64          408.1710        inf          0        nan         nan         nan
+x65         -392.3062        inf         -0        nan         nan         nan
+==============================================================================
+Omnibus:                        0.753   Durbin-Watson:                   1.889
+Prob(Omnibus):                  0.686   Jarque-Bera (JB):                0.650
+Skew:                           0.452   Prob(JB):                        0.722
+Kurtosis:                       2.381   Cond. No.                         7.33
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The input rank is higher than the number of observations.

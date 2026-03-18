@@ -6,11 +6,11 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
     print_step(7, "GENERACIÓN DE REPORTES Y EXPORTACIÓN")
     
     # --- Reporte TXT ---
-    txt_filename = "reporte_analisis_regresion_Q4.txt"
+    txt_filename = "reporte_analisis_regresion_Q2.txt"
     print_substep("Generando reporte científico en texto plano...")
     try:
         with open(txt_filename, "w", encoding="utf-8") as f:
-            f.write("REPORTE CIENTÍFICO DE REGRESIÓN POLINÓMICA (Q4)\n")
+            f.write("REPORTE CIENTÍFICO DE REGRESIÓN POLINÓMICA (Q2 - Optimizado)\n")
             f.write("="*50 + "\n\n")
             f.write(f"RMSE: {rmse:,.2f}\n")
             f.write(f"R^2: {r2:.4f}\n\n")
@@ -21,7 +21,7 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
         print_error(f"Error generando TXT: {e}")
 
     # --- Reporte EXCEL ---
-    xlsx_filename = "resultados_regresion_Q4_organizados.xlsx"
+    xlsx_filename = "resultados_regresion_Q2_organizados.xlsx"
     print_substep("Compilando resultados en libro de Excel...")
     
     # Extraer coeficientes
