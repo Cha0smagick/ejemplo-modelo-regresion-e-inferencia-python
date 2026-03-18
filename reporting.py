@@ -1,11 +1,13 @@
 import pandas as pd
+from utils import print_step, print_success, print_error, print_substep
 
 def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_test, y_pred):
     """Genera salidas en TXT y Excel."""
-    print("\n--- 7. GENERACIÓN DE REPORTES Y EXPORTACIÓN ---")
+    print_step(7, "GENERACIÓN DE REPORTES Y EXPORTACIÓN")
     
     # --- Reporte TXT ---
     txt_filename = "reporte_analisis_regresion_Q4.txt"
+    print_substep("Generando reporte científico en texto plano...")
     try:
         with open(txt_filename, "w", encoding="utf-8") as f:
             f.write("REPORTE CIENTÍFICO DE REGRESIÓN POLINÓMICA (Q4)\n")
@@ -14,12 +16,13 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
             f.write(f"R^2: {r2:.4f}\n\n")
             f.write("RESUMEN DEL MODELO (Statsmodels)\n")
             f.write(model.summary().as_text())
-        print(f"-> Reporte TXT guardado.")
+        print_success(f"Archivo guardado: {txt_filename}")
     except Exception as e:
-        print(f"Error generando TXT: {e}")
+        print_error(f"Error generando TXT: {e}")
 
     # --- Reporte EXCEL ---
     xlsx_filename = "resultados_regresion_Q4_organizados.xlsx"
+    print_substep("Compilando resultados en libro de Excel...")
     
     # Extraer coeficientes
     try:
@@ -58,6 +61,6 @@ def generar_reportes_finales(df_limpio, desc_stats, corr, model, rmse, r2, y_tes
                 worksheet = writer.sheets[sheet_name]
                 for col_num, value in enumerate(data.columns.values):
                     worksheet.write(0, col_num + 1, value, fmt_header)
-        print(f"-> Excel guardado: {xlsx_filename}")
+        print_success(f"Archivo guardado: {xlsx_filename}")
     except Exception as e:
-        print(f"Error Excel: {e}")
+        print_error(f"Error Excel: {e}")

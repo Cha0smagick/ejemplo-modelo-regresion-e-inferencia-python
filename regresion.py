@@ -12,6 +12,7 @@ from data_loader import cargar_datos
 from analysis import analisis_exploratorio, analisis_inferencial_clt, filtrar_mejor_canal
 from model_pipeline import preprocesamiento, pipeline_regresion_q4, diagnostico_residuos, exportar_modelo
 from reporting import generar_reportes_finales
+from utils import print_warning, print_info
 
 def main():
     try:
@@ -32,9 +33,9 @@ def main():
         if not target_col:
             # Fallback: Usar la última columna si no se encuentra nombre conocido
             target_col = df.columns[-1]
-            print(f"Advertencia: No se detectó nombre estándar de target. Usando la última columna: '{target_col}'")
+            print_warning(f"No se detectó nombre estándar de target. Usando la última columna: '{target_col}'")
         else:
-            print(f"Variable objetivo detectada: '{target_col}'")
+            print_info("Variable objetivo detectada", target_col)
             
         # 3. Análisis Inferencial (TLC y Hipótesis)
         p_val = analisis_inferencial_clt(df, target_col)
