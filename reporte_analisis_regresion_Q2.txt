@@ -1,42 +1,48 @@
 REPORTE CIENTÍFICO: RANDOM FOREST REGRESSOR
 ==================================================
 
-RMSE: 34,336.90
-R^2: 0.0465
+RMSE: 34,240.48
+R^2: 0.0518
 
 IMPORTANCIA DE VARIABLES (Random Forest)
 --------------------------------------------------
                    Variable  Importancia
-   customer_segment_premium     0.248938
-                       year     0.101254
-                   ad_spend     0.092680
-         click_through_rate     0.081352
-                impressions     0.076202
-              discount_rate     0.071878
-          competition_index     0.070947
-               market_reach     0.057866
-                      price     0.052414
-                      month     0.044106
-                        dow     0.024932
-     campaign_duration_days     0.019039
-          seasonality_index     0.016305
-       channel_social media     0.006522
-               region_north     0.005741
-   product_category_storage     0.004984
-  customer_segment_standard     0.004843
-             channel_search     0.004067
-              channel_email     0.003668
-  product_category_lighting     0.002922
-  product_category_seasonal     0.002471
-         channel_influencer     0.001509
-product_category_stationery     0.001422
-                 channel_tv     0.001270
-   product_category_kitchen     0.000983
-                region_east     0.000802
-               region_norht     0.000426
-                region_west     0.000321
-                region_nort     0.000074
-               region_south     0.000063
+   customer_segment_premium     0.284817
+                       year     0.112407
+           estimated_clicks     0.059000
+                        cpm     0.052410
+                 real_price     0.048773
+          competition_index     0.048752
+         click_through_rate     0.047446
+              discount_rate     0.044731
+                      month     0.043599
+               log_ad_spend     0.037419
+                   ad_spend     0.033152
+                impressions     0.027402
+            log_impressions     0.024563
+                      price     0.018685
+                        dow     0.018436
+           log_market_reach     0.018086
+               market_reach     0.016858
+          seasonality_index     0.014610
+     campaign_duration_days     0.014217
+  customer_segment_standard     0.007105
+               region_north     0.004656
+       channel_social media     0.004035
+             channel_search     0.003741
+  product_category_lighting     0.002500
+  product_category_seasonal     0.002314
+   product_category_storage     0.002124
+              channel_email     0.002010
+                 channel_tv     0.001577
+product_category_stationery     0.001194
+   product_category_kitchen     0.001180
+                region_east     0.001035
+         channel_influencer     0.000710
+                region_nort     0.000161
+                region_west     0.000149
+               region_norht     0.000147
+               region_south     0.000000
         channel_socialmedia     0.000000
        channel_socail media     0.000000
        channel_social_media     0.000000

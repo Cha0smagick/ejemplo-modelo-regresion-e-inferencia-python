@@ -35,12 +35,37 @@ def preprocesamiento(df, target_col='revenue'):
     X = df.drop(columns=cols_drop)
     y = df[target_col]
     
-    # 3. Ingeniería de Características: One-Hot Encoding para categorías
+    # 3. IMPUTACIÓN PREVIA (Vital para Feature Engineering)
+    # Llenamos nulos numéricos antes de operar con ellos para no propagar NaNs
+    num_cols = X.select_dtypes(include=[np.number]).columns
+    X[num_cols] = X[num_cols].fillna(X[num_cols].median())
+
+    # 4. FEATURE ENGINEERING (La clave para subir el R2)
+    print_substep("Generando variables de negocio (Feature Engineering)...")
+    
+    # Precio Real (con descuento aplicado)
+    if 'price' in X.columns and 'discount_rate' in X.columns:
+        X['real_price'] = X['price'] * (1 - X['discount_rate'])
+        
+    # Eficiencia de Anuncios (Costo por Impresión)
+    if 'ad_spend' in X.columns and 'impressions' in X.columns:
+        # Sumamos 1 para evitar división por cero
+        X['cpm'] = X['ad_spend'] / (X['impressions'] + 1) * 1000
+        
+    # Engagement estimado
+    if 'impressions' in X.columns and 'click_through_rate' in X.columns:
+        X['estimated_clicks'] = X['impressions'] * X['click_through_rate']
+        
+    # Transformación Logarítmica de Inputs (Ayuda a modelos con variables de dinero)
+    for col in ['ad_spend', 'impressions', 'market_reach']:
+        if col in X.columns:
+            X[f'log_{col}'] = np.log1p(X[col])
+
+    # 5. Codificación One-Hot
     print_substep("Codificando variables categóricas (One-Hot Encoding)...")
     X = pd.get_dummies(X, drop_first=True)
     
-    # Imputación profesional de características (rellenar huecos en X)
-    # Usamos la mediana porque es resistente a outliers
+    # Imputación final por seguridad (por si quedaron nulos tras dummies)
     print_substep("Imputando valores faltantes en características (Mediana)...")
     imputer = SimpleImputer(strategy='median')
     X_imputed = pd.DataFrame(imputer.fit_transform(X), columns=X.columns, index=X.index)
@@ -49,8 +74,8 @@ def preprocesamiento(df, target_col='revenue'):
     return train_test_split(X_imputed, y, test_size=0.2, random_state=42)
 
 def pipeline_modelado_avanzado(X_train, y_train, X_test, y_test):
-    """Modelo avanzado utilizando Gradient Boosting."""
-    print_step(5, "MODELADO: MACHINE LEARNING (GRADIENT BOOSTING)")
+    """Modelo avanzado utilizando Gradient Boosting Optimizado."""
+    print_step(5, "MODELADO: GRADIENT BOOSTING (TUNED)")
     
     # Random Forest no necesita escalado ni creación manual de polinomios.
     # Maneja interacciones no lineales internamente.
@@ -71,12 +96,13 @@ def pipeline_modelado_avanzado(X_train, y_train, X_test, y_test):
 
     # 4. MODELADO CON GRADIENT BOOSTING
     # Boosting suele superar a Random Forest en datos tabulares ruidosos
-    print_substep("Entrenando Gradient Boosting Regressor...")
+    print_substep("Entrenando Gradient Boosting (1000 árboles, LR=0.05)...")
     model = GradientBoostingRegressor(
-        n_estimators=500,       # Más árboles, pero más pequeños
-        learning_rate=0.05,     # Aprender lento para generalizar mejor
-        max_depth=5,            # Profundidad controlada para evitar overfitting
-        min_samples_leaf=10,    # Regularización
+        n_estimators=1000,      # Aumentamos árboles para capturar más matices
+        learning_rate=0.02,     # Aprendizaje más lento = Mayor precisión
+        max_depth=4,            # Profundidad moderada para evitar memorización
+        min_samples_leaf=15,    # Más datos por hoja para robustez
+        subsample=0.8,          # Stochastic Gradient Boosting (reduce overfitting)
         loss='absolute_error',  # Clave: Usar error absoluto para ignorar outliers extremos
         random_state=42,
     )
